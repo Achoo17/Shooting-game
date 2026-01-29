@@ -4,56 +4,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mission: Valentine Shooting</title>
+<title>Valentine Shooter</title>
 <style>
-body {
-margin: 0;
-font-family: 'Segoe UI', sans-serif;
-background: #080812;
-color: #f2f2f7;
-text-align: center;
-}
-#game { max-width: 900px; margin: auto; padding: 20px; }
-h1 { color: #ff4fa3; text-shadow: 0 0 10px #ff4fa3; }
-#info { margin: 10px 0; font-size: 1.1em; }
-#playArea {
-position: relative;
-width: 100%;
-height: 400px;
-background: radial-gradient(circle, #15152b, #05050a);
-border-radius: 20px;
-overflow: hidden;
-box-shadow: 0 0 30px rgba(255,79,163,0.4);
-}
-.target {
-position: absolute;
-padding: 10px 14px;
-background: #222;
-color: #fff;
-border-radius: 50px;
-cursor: pointer;
-user-select: none;
-box-shadow: 0 0 10px rgba(255,255,255,0.2);
-font-size: 0.9em;
-}
-button {
-margin-top: 15px;
-padding: 12px 26px;
-border-radius: 12px;
-border: none;
-font-size: 1em;
-cursor: pointer;
-background: #ff4fa3;
-color: #080812;
-}
-button:hover { background: #ff2d92; }
-img { max-width: 260px; border-radius: 15px; margin-top: 20px; }
+body { margin:0; font-family:'Segoe UI',sans-serif; background:#080812; color:#fff; text-align:center; }
+#game { max-width:900px; margin:auto; padding:20px; }
+h1 { color:#ff4fa3; text-shadow:0 0 10px #ff4fa3; }
+#info { margin:10px 0; font-size:1.1em; }
+#playArea { position:relative; width:100%; height:400px; background:radial-gradient(circle,#15152b,#05050a); border-radius:20px; overflow:hidden; box-shadow:0 0 30px rgba(255,79,163,0.4); }
+.target { position:absolute; width:60px; height:60px; background:#ff69b4; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; color:#0b0b16; user-select:none; cursor:pointer; font-size:0.9em; }
+.bullet { position:absolute; width:6px; height:6px; background:#fff; border-radius:50%; pointer-events:none; }
+button { margin-top:15px; padding:12px 26px; border-radius:12px; border:none; font-size:1em; cursor:pointer; background:#ff69b4; color:#0b0b16; }
+button:hover { background:#ff3d92; }
+img { max-width:260px; border-radius:15px; margin-top:20px; }
 </style>
 </head>
 <body>
+
 <div id="game">
-<h1>🎯 Mission: Unknown</h1>
-<p id="info">Objective: Eliminate all targets.</p>
+<h1>🎯 Mission: Valentine</h1>
+<p id="info">Click the targets to shoot!</p>
 <div id="playArea"></div>
 <button id="startBtn" onclick="startGame()">Start Mission</button>
 </div>
@@ -65,55 +34,55 @@ const startBtn = document.getElementById("startBtn");
 
 let level = 1;
 let targetsRemaining = 0;
-let interval;
 let movingTargets = [];
+let interval;
 
 const levels = [
-["???", "???", "???", "???"],
-["STRESS", "EMAILS", "MEETINGS", "MONDAY", "DEADLINE"],
-["WORK", "TIRED", "LAUNDRY", "BILLS", "ALARM", "TRAFFIC"]
+["???","???","???","???"],
+["STRESS","EMAILS","MEETINGS","MONDAY","DEADLINE"],
+["WORK","TIRED","LAUNDRY","BILLS","ALARM","TRAFFIC"]
 ];
 
-function startGame() {
-level = 1;
-startBtn.style.display = "none";
-info.innerHTML = "Level 1: Unknown threats detected.";
+function startGame(){
+level=1;
+startBtn.style.display="none";
+info.innerHTML="Level 1: Unknown threats detected.";
 nextLevel();
 }
 
-function nextLevel() {
-playArea.innerHTML = "";
+function nextLevel(){
+playArea.innerHTML="";
+movingTargets=[];
 clearInterval(interval);
-movingTargets = [];
 
-const words = levels[level - 1];
-targetsRemaining = words.length;
+const words=levels[level-1];
+targetsRemaining=words.length;
 
-words.forEach(word => createTarget(word));
+words.forEach(word=>createTarget(word));
 
-interval = setInterval(moveTargets, 50);
+interval=setInterval(moveTargets,50);
 }
 
-function createTarget(text) {
-const target = document.createElement("div");
-target.className = "target";
-target.innerText = text;
+function createTarget(text){
+const target=document.createElement("div");
+target.className="target";
+target.innerText=text;
 
-target.style.left = Math.random() * 80 + "%";
-target.style.top = Math.random() * 80 + "%";
+target.style.left=Math.random()*80+"%";
+target.style.top=Math.random()*80+"%";
 
-// Click event
-target.onclick = () => {
-if (playArea.contains(target)) {
+target.onclick=(e)=>{
+shootEffect(e.clientX, e.clientY);
+if(playArea.contains(target)){
 playArea.removeChild(target);
 targetsRemaining--;
-if (targetsRemaining === 0) {
+if(targetsRemaining===0){
 clearInterval(interval);
 level++;
-if (level <= levels.length) {
-info.innerHTML = "Nice shooting 😏 Loading next level…";
-setTimeout(nextLevel, 1200);
-} else {
+if(level<=levels.length){
+info.innerHTML="Nice shooting 😏 Loading next level…";
+setTimeout(nextLevel,1200);
+}else{
 finalScene();
 }
 }
@@ -124,42 +93,50 @@ playArea.appendChild(target);
 movingTargets.push(target);
 }
 
-function moveTargets() {
-movingTargets.forEach(t => {
-if (playArea.contains(t)) { // Only move targets still in play
-let x = Math.random() * 80;
-let y = Math.random() * 80;
-t.style.left = x + "%";
-t.style.top = y + "%";
+function moveTargets(){
+movingTargets.forEach(t=>{
+if(playArea.contains(t)){
+t.style.left=Math.random()*80+"%";
+t.style.top=Math.random()*80+"%";
 }
 });
 }
 
-function finalScene() {
-playArea.innerHTML = "";
-info.innerHTML = "";
+// Shooting animation
+function shootEffect(x,y){
+const bullet=document.createElement("div");
+bullet.className="bullet";
+bullet.style.left=(x-3)+"px";
+bullet.style.top=(y-3)+"px";
+document.body.appendChild(bullet);
 
-document.getElementById("game").innerHTML = `
+let posY=y-3;
+const anim=setInterval(()=>{
+posY-=10;
+bullet.style.top=posY+"px";
+if(posY<0){
+clearInterval(anim);
+bullet.remove();
+}
+},20);
+}
+
+function finalScene(){
+playArea.innerHTML="";
+info.innerHTML="";
+
+document.getElementById("game").innerHTML=`
 <h1>Mission Complete 😌</h1>
 <p>You cleared every target.</p>
 <p>Except one thing…</p>
-
 <h2 style="color:#ff4fa3;">Me 💖</h2>
-
-<p style="margin-top:15px;">
-I may not be a final boss,<br>
-but I do have one important question…
-</p>
-
+<p style="margin-top:15px;">I may not be a final boss,<br>but I have one important question…</p>
 <h2>Will you be my Valentine? 😘</h2>
-
 <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif">
-
-<p style="margin-top:20px; font-size:0.95em;">
-(Correct response already unlocked 😉)
-</p>
+<p style="margin-top:20px; font-size:0.95em;">(Yes is the only correct answer 😉)</p>
 `;
 }
 </script>
+
 </body>
 </html>
