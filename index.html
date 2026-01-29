@@ -1,10 +1,10 @@
+<!-- force rebuild -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mission: Unknown</title>
-
+<title>Mission: Valentine Shooting</title>
 <style>
 body {
 margin: 0;
@@ -13,23 +13,9 @@ background: #080812;
 color: #f2f2f7;
 text-align: center;
 }
-
-#game {
-max-width: 900px;
-margin: auto;
-padding: 20px;
-}
-
-h1 {
-color: #ff4fa3;
-text-shadow: 0 0 10px #ff4fa3;
-}
-
-#info {
-margin: 10px 0;
-font-size: 1.1em;
-}
-
+#game { max-width: 900px; margin: auto; padding: 20px; }
+h1 { color: #ff4fa3; text-shadow: 0 0 10px #ff4fa3; }
+#info { margin: 10px 0; font-size: 1.1em; }
 #playArea {
 position: relative;
 width: 100%;
@@ -39,7 +25,6 @@ border-radius: 20px;
 overflow: hidden;
 box-shadow: 0 0 30px rgba(255,79,163,0.4);
 }
-
 .target {
 position: absolute;
 padding: 10px 14px;
@@ -51,11 +36,6 @@ user-select: none;
 box-shadow: 0 0 10px rgba(255,255,255,0.2);
 font-size: 0.9em;
 }
-
-.target:hover {
-transform: scale(1.1);
-}
-
 button {
 margin-top: 15px;
 padding: 12px 26px;
@@ -66,27 +46,15 @@ cursor: pointer;
 background: #ff4fa3;
 color: #080812;
 }
-
-button:hover {
-background: #ff2d92;
-}
-
-img {
-max-width: 260px;
-border-radius: 15px;
-margin-top: 20px;
-}
+button:hover { background: #ff2d92; }
+img { max-width: 260px; border-radius: 15px; margin-top: 20px; }
 </style>
 </head>
-
 <body>
-
 <div id="game">
 <h1>🎯 Mission: Unknown</h1>
 <p id="info">Objective: Eliminate all targets.</p>
-
 <div id="playArea"></div>
-
 <button id="startBtn" onclick="startGame()">Start Mission</button>
 </div>
 
@@ -96,9 +64,9 @@ const info = document.getElementById("info");
 const startBtn = document.getElementById("startBtn");
 
 let level = 1;
-let score = 0;
 let targetsRemaining = 0;
 let interval;
+let movingTargets = [];
 
 const levels = [
 ["???", "???", "???", "???"],
@@ -107,7 +75,6 @@ const levels = [
 ];
 
 function startGame() {
-score = 0;
 level = 1;
 startBtn.style.display = "none";
 info.innerHTML = "Level 1: Unknown threats detected.";
@@ -117,13 +84,14 @@ nextLevel();
 function nextLevel() {
 playArea.innerHTML = "";
 clearInterval(interval);
+movingTargets = [];
 
 const words = levels[level - 1];
 targetsRemaining = words.length;
 
 words.forEach(word => createTarget(word));
 
-interval = setInterval(moveTargets, 40 + level * 10);
+interval = setInterval(moveTargets, 50);
 }
 
 function createTarget(text) {
@@ -134,15 +102,14 @@ target.innerText = text;
 target.style.left = Math.random() * 80 + "%";
 target.style.top = Math.random() * 80 + "%";
 
+// Click event
 target.onclick = () => {
+if (playArea.contains(target)) {
 playArea.removeChild(target);
 targetsRemaining--;
-score++;
-
 if (targetsRemaining === 0) {
 clearInterval(interval);
 level++;
-
 if (level <= levels.length) {
 info.innerHTML = "Nice shooting 😏 Loading next level…";
 setTimeout(nextLevel, 1200);
@@ -150,18 +117,21 @@ setTimeout(nextLevel, 1200);
 finalScene();
 }
 }
+}
 };
 
 playArea.appendChild(target);
+movingTargets.push(target);
 }
 
 function moveTargets() {
-const targets = document.querySelectorAll(".target");
-targets.forEach(t => {
-let x = Math.random() * 90;
-let y = Math.random() * 90;
+movingTargets.forEach(t => {
+if (playArea.contains(t)) { // Only move targets still in play
+let x = Math.random() * 80;
+let y = Math.random() * 80;
 t.style.left = x + "%";
 t.style.top = y + "%";
+}
 });
 }
 
@@ -183,7 +153,6 @@ but I do have one important question…
 
 <h2>Will you be my Valentine? 😘</h2>
 
-<!-- CHANGE GIF BELOW -->
 <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif">
 
 <p style="margin-top:20px; font-size:0.95em;">
@@ -192,6 +161,5 @@ but I do have one important question…
 `;
 }
 </script>
-
 </body>
 </html>
